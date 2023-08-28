@@ -7,6 +7,11 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
+	
+	type Data = {
+		success: boolean;
+		errors: Record<string,string>;
+	}
 }
 
 export {};
