@@ -1,4 +1,4 @@
-import { addTodo, removeTodo } from "$lib/server/database";
+import { addTodo, removeTodo, completeTodo } from "$lib/server/database";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
@@ -23,7 +23,16 @@ export const POST: RequestHandler = async (event) => {
     return json(data);
 }
 
-export const DELETE: RequestHandler =async (event) => {
+export const PATCH: RequestHandler = async (event) => {
+    const formData = await event.request.formData();
+    const todoId = Number(formData.get("id"));
+
+    completeTodo(todoId);
+
+    return json({success: true});
+}
+
+export const DELETE: RequestHandler = async (event) => {
     const formData = await event.request.formData();
     const todoId = Number(formData.get("id"));
 
