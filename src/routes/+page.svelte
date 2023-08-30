@@ -1,78 +1,40 @@
 <script lang="ts">
-    import { invalidateAll } from "$app/navigation";
-    
-    import type { PageData } from "./$types";
+    import { enhance } from "$app/forms";
+    import type { ActionData, PageData } from "./$types";
 
     export let data: PageData;
-
-    let form: Data;
-
-    async function addTodo(event: Event) {
-        const formEl = event.target as HTMLFormElement;
-        const data = new FormData(formEl);
-
-        const response = await fetch(formEl.action, {
-            method: "POST",
-            body: data
-        })
-
-        const responseData = await response.json();
-
-        form = responseData;
-
-        formEl.reset();
-
-        await invalidateAll();
-    }
-
-    async function completeTodo(event: Event) {
-        const fromEl = event.target as HTMLFormElement;
-        const data = new FormData(fromEl);
-
-        const response = await fetch(fromEl.action, {
-            method: "PATCH",
-            body: data
-        });
-
-        await invalidateAll();
-    }
-
-    async function removeTodo(event:Event) {
-        const formEl = event.target as HTMLFormElement;
-        const data = new FormData(formEl);
-
-        const response = await fetch(formEl.action, {
-            method: "DELETE",
-            body: data
-        });
-
-        await invalidateAll();
-    }
+    export let form: ActionData;
 
 </script>
 
 <div>
 
-    <form on:submit|preventDefault={addTodo} method="POST">
+    <div class="secondaryButtonsPanel">
+        <form method="POST" action="?/clearTodos" use:enhance>
+            <button class="secondaryButton" type="submit">Clear All</button>
+        </form>
+    </div>
+
+    <form method="POST" action="?/addTodo" use:enhance>
         <input type="text" name="todo" placeholder="+ Add a todo">
         {#if form?.success}
             <p class="success">Added a todo! 🫡</p>
         {/if}
-        {#if form?.errors?.todo}
+        {#if form?.missing}
             <p class="error">This field is required!</p>
         {/if}
     </form>
-
+    
     <ul>
         {#each data.todos as todo}
             <li>
                 <span class:crossed={todo.completed}>{todo.text}</span>
                 <div class="buttons">
-                    <form on:submit|preventDefault={completeTodo} method="POST">
+                    <form method="POST" action="?/completeTodo" use:enhance>
                         <input type="hidden" name="id" value={todo.id}>
                         <button class="check" type="submit">✅</button>
                     </form>
-                    <form on:submit|preventDefault={removeTodo} method="POST">
+                    <form method="POST" action="?/removeTodo" use:enhance>
                         <input type="hidden" name="id" value={todo.id}>
                         <button class="delete" type="submit">❌</button>
                     </form>
@@ -132,5 +94,21 @@
 
     .error {
         color: red;
+    }
+
+    .secondaryButtonsPanel {
+        margin: 0;
+        display: flex;
+        justify-content: flex-end;
+        opacity: 40%;
+        height: 2.5rem;
+    }
+
+    .secondaryButton {
+        margin: 0;
+        background: none;
+        border: none;
+        padding: .5rem;
+        color: darkturquoise;
     }
 </style>
