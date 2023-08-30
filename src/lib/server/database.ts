@@ -27,8 +27,15 @@ export function completeTodo(id: number) {
         return;
     }
 
-    if(todo.completed === false) todo.completed = true;
-    else todo.completed = false;
+    if(todo.completed === false) {
+        todo.completed = true;
+        return "Completed a todo";
+    }
+    else {
+        todo.completed = false;
+        return "Uncompleted a todo";
+    }
+
 }
 
 export function removeTodo(id: number) {

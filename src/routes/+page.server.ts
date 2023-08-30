@@ -25,9 +25,9 @@ export const actions: Actions = {
         const formData = await event.request.formData();
         const todoId = Number(formData.get("id"));
 
-        completeTodo(todoId);
+        const stateInfo = completeTodo(todoId);
 
-        return {success: true, stateInfo: "Completed a todo"};
+        return {success: true, stateInfo: stateInfo};
     },
 
     removeTodo: async (event) => {
