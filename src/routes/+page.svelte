@@ -10,6 +10,9 @@
 <div>
 
     <div class="secondaryButtonsPanel">
+        <form method="POST" action="?/completeAllTodos" use:enhance>
+            <button class="secondaryButton" type="submit">Complete All</button>
+        </form>
         <form method="POST" action="?/clearTodos" use:enhance>
             <button class="secondaryButton" type="submit">Clear All</button>
         </form>
@@ -17,8 +20,9 @@
 
     <form method="POST" action="?/addTodo" use:enhance>
         <input type="text" name="todo" placeholder="+ Add a todo">
+
         {#if form?.success}
-            <p class="success">Added a todo! 🫡</p>
+            <p class="success">{form.stateInfo}! 🫡</p>
         {/if}
         {#if form?.missing}
             <p class="error">This field is required!</p>

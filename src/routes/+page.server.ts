@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import { addTodo, clearTodos, completeTodo, getTodos, removeTodo } from "$lib/server/database"
+import { addTodo, clearTodos, completeAllTodos, completeTodo, getTodos, removeTodo } from "$lib/server/database"
 import { fail, type Actions } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async () => {
@@ -18,7 +18,7 @@ export const actions: Actions = {
 
         addTodo(todoText);
 
-        return {success: true};
+        return {success: true, stateInfo: "Added a todo"};
     },
 
     completeTodo: async (event) => {
@@ -27,7 +27,7 @@ export const actions: Actions = {
 
         completeTodo(todoId);
 
-        return {success: true};
+        return {success: true, stateInfo: "Completed a todo"};
     },
 
     removeTodo: async (event) => {
@@ -36,10 +36,20 @@ export const actions: Actions = {
 
         removeTodo(todoId);
 
-        return {success: true};
+        return {success: true, stateInfo: "Removed a todo"};
+    },
+
+    completeAllTodos: () => {
+
+        completeAllTodos();
+
+        return {success: true, stateInfo: "Completed all todos"};
     },
 
     clearTodos: () => {
+
         clearTodos();
+
+        return {success: true, stateInfo: "Cleared all todos"};
     }
 }
