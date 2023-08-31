@@ -1,9 +1,12 @@
 import type { PageServerLoad } from "./$types";
-import { addTodo, clearTodos, completeAllTodos, completeTodo, getTodos, removeTodo } from "$lib/server/database"
 import { fail, type Actions } from "@sveltejs/kit";
+import Prisma from "@prisma/client";
+
+const PrismaClient = Prisma.PrismaClient;
+const prisma = new PrismaClient();
 
 export const load: PageServerLoad = async () => {
-    const todos = getTodos();
+    const todos = await prisma.todo.findMany();
     return { todos };
 }
 
@@ -16,39 +19,59 @@ export const actions: Actions = {
             return fail(400, {todoText, missing: true});
         }
 
-        addTodo(todoText);
+        await prisma.todo.create({
+            data: {
+                text: todoText,
+                completed: false
+            }
+        })
 
         return {success: true, stateInfo: "Added a todo"};
     },
 
     completeTodo: async (event) => {
         const formData = await event.request.formData();
-        const todoId = Number(formData.get("id"));
+        const todoId = String(formData.get("id"));
 
-        const stateInfo = completeTodo(todoId);
+        await prisma.todo.update({
+        where: {
+            id: todoId
+        },
+        data: {
+            completed: true
+        }
+        });
 
-        return {success: true, stateInfo: stateInfo};
+        return {success: true, stateInfo: "Completed a todo"};
     },
 
     removeTodo: async (event) => {
         const formData = await event.request.formData();
-        const todoId = Number(formData.get("id"));
+        const todoId = String(formData.get("id"));
 
-        removeTodo(todoId);
+        await prisma.todo.delete({
+            where: {
+                id: todoId
+            }
+        })
 
         return {success: true, stateInfo: "Removed a todo"};
     },
 
-    completeAllTodos: () => {
+    completeAllTodos: async () => {
 
-        completeAllTodos();
+        await prisma.todo.updateMany({
+            data:{
+                completed: true
+            }
+        })        
 
         return {success: true, stateInfo: "Completed all todos"};
     },
 
-    clearTodos: () => {
+    clearTodos: async () => {
 
-        clearTodos();
+        await prisma.todo.deleteMany();
 
         return {success: true, stateInfo: "Cleared all todos"};
     }

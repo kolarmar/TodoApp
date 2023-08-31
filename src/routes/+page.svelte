@@ -12,8 +12,8 @@
 
         return async ({update}) => {
             loading = false;
-            await update()
-        }
+            await update();
+        };
     }
 
 </script>
